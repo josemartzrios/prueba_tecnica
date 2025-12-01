@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+
 @Component
 public class JwtUtil {
 
@@ -76,4 +77,15 @@ public class JwtUtil {
         final String email = extractEmail(token);
         return (email.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
+
+    public String getUsernameFromJWT(String token) {
+        // Uso del Jwts.parserBuilder() moderno (jjwt >= 0.11.x)
+        return Jwts.parser()
+                .setSigningKey(getSigningKey()) // Usa tu método existente para obtener la clave secreta
+                .build() // Finaliza la construcción del parser
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject(); // El sujeto (subject) contiene el email/username
+    }
+
 }

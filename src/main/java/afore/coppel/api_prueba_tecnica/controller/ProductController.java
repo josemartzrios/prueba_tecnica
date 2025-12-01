@@ -3,12 +3,12 @@ package afore.coppel.api_prueba_tecnica.controller;
 import afore.coppel.api_prueba_tecnica.model.Product;
 import afore.coppel.api_prueba_tecnica.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/products") // Mapea la ruta base /products
@@ -24,7 +24,7 @@ public class ProductController {
     /**
      * GET /products
      * Lista todos los productos disponibles.
-     * Corresponde a la respuesta '200' en tu definición Swagger.
+     * respuesta '200'
      */
     @GetMapping // Mapea las solicitudes GET a /products
     public ResponseEntity<List<Product>> listAllProducts() {
@@ -40,5 +40,40 @@ public class ProductController {
 
         // Devuelve 200 OK con el cuerpo de la lista de productos
         return ResponseEntity.ok(products);
+    }
+
+    /**
+     * POST /products
+     * Crea un nuevo producto. Requiere rol ADMIN.
+     * @return 201 Created con el objeto de producto.
+     */
+    @PostMapping
+    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
+        // La validación de seguridad (rol ADMIN) la maneja Spring Security antes de llegar aquí.
+
+        Product newProduct = productService.createProduct(product);
+
+        // Devuelve 201 Created
+        return new ResponseEntity<>(newProduct, HttpStatus.CREATED);
+    }
+
+
+    /**
+     * Endpoint GET /products/{sku}
+     * Obtiene el producto por SKU. Accesible para todos (permitAll en SecurityConfig).
+     * Mapea la excepción a 404.
+     */
+    @GetMapping("/{sku}")
+    public ResponseEntity<Product> getProductBySku(@PathVariable String sku) {
+        try {
+            Product product = productService.getProductBySku(sku);
+            return ResponseEntity.ok(product);
+        } catch (NoSuchElementException e) {
+            // Si el servicio lanza NoSuchElementException, devolvemos un 404 Not Found
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (Exception e) {
+            // Manejo de otros errores internos, devolviendo 500
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }
