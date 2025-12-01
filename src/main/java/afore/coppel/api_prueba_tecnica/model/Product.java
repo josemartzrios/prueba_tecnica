@@ -22,7 +22,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "sku", length = 50)
+    @Column(name = "sku", length = 50, unique = true)
     // NOTA: Quitamos @GeneratedValue porque el SKU lo ingresa el usuario (es un String),
     // no es un autoincremental de la base de datos.
     private String sku;
