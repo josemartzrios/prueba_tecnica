@@ -97,4 +97,19 @@ public class ProductController {
         // Retorna el producto actualizado con el estado 200 OK
         return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
     }
+
+    /**
+     * DELETE /products/{sku}
+     * Elimina un producto por su SKU. Requiere el rol ADMIN.
+     */
+    @DeleteMapping("/{sku}")
+    // Asegura que solo los usuarios con el rol 'ADMIN' puedan eliminar.
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteProduct(@PathVariable String sku) {
+
+        productService.deleteProduct(sku);
+
+        // Retorna el estado 204 No Content, como indica tu especificación de OpenAPI.
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

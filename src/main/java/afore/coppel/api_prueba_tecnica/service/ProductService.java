@@ -87,4 +87,22 @@ public class ProductService {
 
         return updatedProduct;
     }
+
+    /**
+     * Lógica para eliminar un producto por SKU.
+     */
+    @Transactional
+    public void deleteProduct(String sku) {
+
+        // 1. Verificar si el producto existe.
+        if (!productRepository.findBySku(sku).isPresent()) {
+            // Si no se encuentra, lanzar una excepción para que el Controller Advice devuelva un 404
+            throw new RuntimeException("Producto no encontrado con SKU: " + sku);
+        }
+
+        // 2. Eliminar el producto.
+        productRepository.deleteBySku(sku);
+
+        // Aquí iría el log de auditoría: "Producto con SKU [sku] eliminado."
+    }
 }

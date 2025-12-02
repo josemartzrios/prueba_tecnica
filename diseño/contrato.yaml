@@ -261,6 +261,7 @@ paths:
           description: Producto eliminado (Sin contenido)
         '403':
           description: No autorizado
+
   # --- Usuarios (CRUD Admin) ---
 
   /users:

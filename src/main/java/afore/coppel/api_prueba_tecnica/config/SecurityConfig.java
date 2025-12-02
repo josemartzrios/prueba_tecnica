@@ -33,9 +33,14 @@ public class SecurityConfig {
                 // Configuración de las reglas de autorización (la lógica de acceso)
                 .authorizeHttpRequests(authorize -> authorize
 
-                        // 1. REGLA RESTRICTIVA: POST /products requiere el rol ADMIN.
+                        // 1. REGLA RESTRICTIVA: /products requiere el rol ADMIN.
                         .requestMatchers(HttpMethod.POST, "/products").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/products/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/products/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.GET, "/users/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.GET, "/audit/product-logs").hasRole("ADMIN")
 
                         // 2. REGLAS PÚBLICAS: GET /products es accesible para todos.
                         .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
@@ -50,7 +55,6 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
 
-                // --- ¡POSICIÓN CRÍTICA! ---
                 // Agregamos el filtro JWT antes del filtro de autenticación estándar de Spring.
                 // Esto asegura que el token sea procesado ANTES de verificar si la solicitud está autenticada.
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

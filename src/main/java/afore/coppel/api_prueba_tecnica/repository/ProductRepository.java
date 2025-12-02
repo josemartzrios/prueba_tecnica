@@ -9,9 +9,12 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    // Necesario para los endpoints GET /products/{sku} y PUT /products/{sku}
+    // Necesario para los endpoints GET /products/{sku} y PUT /products/{sku} y DELETE
     Optional<Product> findBySku(String sku);
 
     // Para validar que no crear duplicados antes de guardar
     boolean existsBySku(String sku);
+
+    // Metodo para eliminar por SKU. Spring Data JPA lo implementa automáticamente.
+    void deleteBySku(String sku);
 }
